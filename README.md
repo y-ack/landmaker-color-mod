@@ -1,7 +1,7 @@
 # land maker palette mods
 y's palette mods
 
-use [PalMod with Land Maker Support](https://github.com/y-ack/PalMod) to edit
+use [PalMod with Land Maker Support](https://github.com/y-ack/PalMod/releases/tag/v.177l%2BLM) to edit
 palettes
 
 
@@ -35,13 +35,11 @@ able to help generally, can be rearranged as needed for any color vision
 anomaly and without additional feedback, y decided to try implementing them.
 
 ### black/white palettes
-[[lazy-bw/README.md]]
+("lazy" black/white palette sets)[lazy-bw/README.md]
 
 ### other...
 maybe other colorblind palettes in the future on individual request?
 
 
 ## characters
-### aifa
-#### really cool
 
