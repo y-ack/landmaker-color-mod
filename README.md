@@ -35,7 +35,7 @@ able to help generally, can be rearranged as needed for any color vision
 anomaly and without additional feedback, y decided to try implementing them.
 
 ### black/white palettes
-("lazy" black/white palette sets)[lazy-bw/README.md]
+[black/white palette sets](lazy-bw/README.md)
 
 ### other...
 maybe other colorblind palettes in the future on individual request?
