@@ -42,4 +42,3 @@ maybe other colorblind palettes in the future on individual request?
 
 
 ## characters
-
