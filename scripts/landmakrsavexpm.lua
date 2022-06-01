@@ -17,10 +17,10 @@ function save_matrix(m, width, height, filename, palette)
   out = io.open(string.format("raw/%s/%s",manager.machine.system.name,filename),"wb")
   out:write("/* XPM */\n")
   out:write("char* NAME_XPM[] = {")
-  out:write(string.format("\"%d %d %d %d\",\n", width, height, 32, 1))
+  out:write(string.format("\"%d %d %d %d\",\n", width, height, 64, 1))
   CBASE = 48
   out:write(string.format("\"%c c None\",\n",CBASE+0))
-  for i=1, 31, 1 do
+  for i=1, 63, 1 do
     local r = mainrom:read_u8(palette + i*4+1)
     local g = mainrom:read_u8(palette + i*4+2)
     local b = mainrom:read_u8(palette + i*4+3)
@@ -130,18 +130,16 @@ function save_namedblock_as_raw(addr, scp, palette)
 end
 
 
-BL_PAL = 0x0caed2
+BL_OBJ_PAL = 0x0caed2
 BL_OBJ = 0x0ad60e
 for bl_idx=0,5577,1 do
-  pal = mainrom:read_u32(BL_PAL + bl_idx*4)
-  save_namedblock_as_raw(BL_OBJ + 20*bl_idx, 0, pal)
+--  pal = mainrom:read_u32(BL_OBJ_PAL + bl_idx*4)
+--  save_namedblock_as_raw(BL_OBJ + 20*bl_idx, 0, pal)
 end
 
---for i=0,472,1 do
---  save_namedblock_as_raw(0xc8e3a+20*i, 1)
---end
-
--- save_namedblock_as_raw(0xb2136)
--- save_namedblock_as_raw(0xb05de)
--- save_namedblock_as_raw(0xb64b6)
--- save_namedblock_as_raw(0xb64b6+20*(56+3753+1)-16, 1)
+BL_SCR_PAL = 0x0d05fe
+BL_SCR = 0x0c89da
+for bl_idx=0,472,1 do
+--  pal = mainrom:read_u32(BL_SCR_PAL + bl_idx*4)
+--  save_namedblock_as_raw(BL_SCR + 20*bl_idx, 1, pal)
+end
