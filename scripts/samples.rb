@@ -30,12 +30,13 @@ end
 
 class SampleParameters < BinData::Record
   endian :big
-  uint16 :u1
+  uint8 :u1
+  uint8 :u2
 	Uint24be :start_ofs
-	uint8 :u3
-	Uint24be :loop_ofs
-	uint8 :u4
-	Uint24be :end_ofs
+	uint8 :key_range_end
+	Uint24be :loop_start
+	uint8 :loop_type #0=non-looping, 1,2,4=uni-directional, 3=bi-directional
+	Uint24be :loop_end
 	uint8 :u5
 end
 
@@ -49,9 +50,8 @@ end
   name_tbl_pos = 1
   while ensoniq.slice(bank+name_tbl_pos,4).unpack("L>").first != 0
     sample_n = SampleName.read(ensoniq.slice(bank+name_tbl_pos,14))
-    puts sample_n
-    sample_params = SampleParameters.read(ensoniq.slice(bank+sample_n.ofs,14))
-    puts sample_params
+    params = SampleParameters.read(ensoniq.slice(bank+sample_n.ofs,14))
+    puts "#{sample_n.name},#{bank},#{sample_n.ofs},#{params.u1},#{params.u2},#{params.start_ofs},#{params.key_range_end},#{params.loop_start},#{params.loop_type},#{params.loop_end},#{params.u5}"
     
     name_tbl_pos += 14
   end
