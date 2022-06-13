@@ -70,9 +70,10 @@ end
 	puts samplerate(freqcount(46898)) # -> 14183.40286
 =end
 
-def writewav(filepath, samplerate, es_slice)
+$trk = 0
+def writewav(filepath, samplerate, es_slice, s_name, params)
 	slice_size = es_slice.size
-	header_len = 44
+	header_len = 44 + 46 + 56 + 60
 	# signed 8-bit to unsigned 8-bit
 	es_slice = es_slice.unpack("c*").map { |n| n + 0x80 }.pack("C*")
 	File.open(filepath, 'wb'){ |file|
@@ -87,6 +88,58 @@ def writewav(filepath, samplerate, es_slice)
 		file.write([samplerate].pack('L')) # (sample rate * 8 bit/sample * 1 channel) / 8
 		file.write([1].pack('S')) # (8 bit/sample * 1 channel) / 8
 		file.write([8].pack('S')) # 8 bits per sample
+
+		# INFO, 46 bytes
+		file.write("LIST")
+		file.write([38].pack('L'))
+		file.write("INFO")
+		file.write("INAM")
+		file.write([14].pack("L"))
+		file.write([s_name].pack("A12"))
+		file.write([0].pack('S'))
+		file.write("ITRK")
+		file.write([4].pack("L"))
+		$trk = $trk + 1
+		file.write([$trk.to_s].pack("a4"))
+
+		# ID3, 56 bytes
+		file.write("id3 ")
+		file.write([48].pack('L'))
+		file.write("ID3") # ID3v2/file identifier
+		file.write("\x03\x00") # ID3v2 version
+		file.write("\0") # ID3v2 flags
+		file.write([37].pack("L>")) # size
+		file.write("TIT2")        # TITLE frame
+		file.write([13].pack('L>'))
+		file.write([0].pack('S>')) # flags
+		file.write("\0") # ?
+		file.write([s_name].pack("A12"))
+		file.write("TRCK")        # TRACK frame
+		file.write([4].pack("L>"))
+		file.write([0].pack('S>')) # flags
+		file.write($trk.to_s.rjust(4, "\0"))
+		file.write("\0") # padding
+
+		# cue, 60 bytes
+		file.write("cue ")
+		file.write([0x34].pack('L'))
+		file.write([2].pack('L')) # number of cue points
+		file.write("STRT") # loop start cue point identifier (viena needs 0000)
+		file.write([0].pack('L'))
+		file.write("\0\0\0\0") # chunk id (viena needs 0000)
+		file.write([0].pack('L')) # chunk start
+		file.write([0].pack('L')) # block start
+		loop_start_ofs = ((params.loop_start - params.start_ofs) / 2).round
+		file.write([loop_start_ofs].pack('L')) # cue point sample offset
+		file.write("END ") # loop end cue point identifier (viena needs 0000)
+		file.write([0].pack('L'))
+		file.write("\0\0\0\0") # chunk id (viena needs 0000)
+		file.write([0].pack('L')) # chunk start
+		file.write([0].pack('L')) # block start
+		# off by a fractional amount...
+		loop_end_ofs = ((params.loop_end - params.start_ofs) / 2).round
+		file.write([loop_end_ofs].pack('L')) # cue point sample offset
+				
 		file.write("data")
 		file.write([slice_size].pack('L'))
 		file.write(es_slice)
@@ -110,7 +163,7 @@ Dir.mkdir('wav') unless File.exists?('wav')
 			filename = "wav/#{sample_n.name}_#{params.key_range_end}.wav"
 			rate = samplerate(freqcount(params.frequency)).round
 			wavelen = (params.loop_end - params.start_ofs)/2
-			writewav(filename,rate,ensoniq.slice(bank + params.start_ofs/2, wavelen))
+			writewav(filename,rate,ensoniq.slice(bank + params.start_ofs/2, wavelen), sample_n.name, params)
 			split += 1
 			break if params.key_range_end >= 0x7F
 		end
