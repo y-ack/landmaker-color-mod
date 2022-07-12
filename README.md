@@ -1,7 +1,7 @@
 # land maker palette mods
 y's palette mods
 
-use [PalMod with Land Maker Support](https://github.com/y-ack/PalMod/releases/tag/v.177l%2BLM) to edit
+use y's [PalMod with Land Maker Support](https://github.com/y-ack/PalMod/releases/tag/v.177l%2BLM) to edit
 palettes
 
 
@@ -40,5 +40,8 @@ anomaly and without additional feedback, y decided to try implementing them.
 ### other...
 maybe other colorblind palettes in the future on individual request?
 
+### see also
+ - [Rodrick Landmaker Colorblind Mod](https://www.romhacking.net/hacks/6985/)
+is a full palette set and may be more suitable.
 
 ## characters
